@@ -224,17 +224,19 @@ async function handleContinueLearn(): Promise<void> {
         </span>
       </div>
 
-      <!-- 卡片区域：自适应填充剩余空间 -->
+      <!-- 卡片区域：固定高度，防止翻转时页面抖动 -->
       <div class="flex-1 min-h-0 flex items-center justify-center p-4">
-        <WordCard
-          :word="currentWord"
-          :flipped="flipped"
-          :show-feedback="flipped"
-          :auto-pronounce="authStore.profile?.autoPronounce ?? true"
-          :user-word-record="learnStore.currentItem?.userWordRecord ?? null"
-          @flip="handleFlip"
-          @feedback="handleFeedback"
-        />
+        <div class="w-full max-w-md h-[480px]">
+          <WordCard
+            :word="currentWord"
+            :flipped="flipped"
+            :show-feedback="flipped"
+            :auto-pronounce="authStore.profile?.autoPronounce ?? true"
+            :user-word-record="learnStore.currentItem?.userWordRecord ?? null"
+            @flip="handleFlip"
+            @feedback="handleFeedback"
+          />
+        </div>
       </div>
     </template>
 

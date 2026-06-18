@@ -61,7 +61,7 @@ const navItems = [
     </header>
 
     <!-- 主内容 -->
-    <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-6 md:py-8">
+    <main class="mx-auto w-full max-w-5xl flex-1 overflow-y-auto px-4 py-6 md:py-8" style="scrollbar-gutter: stable;">
       <router-view />
     </main>
 
