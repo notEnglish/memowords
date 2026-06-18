@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch, onMounted } from 'vue';
 
 interface WordRecord {
   id: string;
@@ -116,9 +116,15 @@ function toggle(key: keyof typeof expandedSections.value): void {
 
 function speak(): void {
   if (isSpeaking.value) return;
+  if (!headWord.value) return;
+
+  // 取消当前正在播放的语音
+  window.speechSynthesis.cancel();
+
   isSpeaking.value = true;
   const utterance = new SpeechSynthesisUtterance(headWord.value);
   utterance.lang = 'en-US';
+  utterance.rate = 0.9;
   utterance.onend = () => {
     isSpeaking.value = false;
   };
@@ -129,16 +135,31 @@ function speak(): void {
 }
 
 function pronounce(word: string): void {
+  if (!word) return;
+  window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(word);
   utterance.lang = 'en-US';
+  utterance.rate = 0.9;
   window.speechSynthesis.speak(utterance);
 }
 
-if (props.autoPronounce && props.flipped === false) {
-  setTimeout(() => {
-    pronounce(headWord.value);
-  }, 300);
-}
+// 进入单词详情页时自动发音
+onMounted(() => {
+  if (props.autoPronounce && !props.flipped && headWord.value) {
+    setTimeout(() => {
+      pronounce(headWord.value);
+    }, 300);
+  }
+});
+
+// 单词变化时自动发音
+watch(headWord, (newWord) => {
+  if (props.autoPronounce && !props.flipped && newWord) {
+    setTimeout(() => {
+      pronounce(newWord);
+    }, 300);
+  }
+});
 
 const feedbackLabels: { key: 'correct' | 'hazy' | 'forgot'; label: string; cls: string; intervalText: string }[] = [
   { key: 'forgot', label: '忘记', cls: 'bg-red-100 text-red-600 hover:bg-red-200', intervalText: '再次复习' },
